@@ -10,6 +10,11 @@ const permissionSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  permission_type: {
+    required: true,
+    type: String,
+    enum: ["MODULE", "ACTION"],
+  },
 });
 
 module.exports = mongoose.model("permission", permissionSchema);

@@ -1,9 +1,9 @@
 const express = require("express");
 const User = require("../models/user-model");
 const bcrypt = require("bcryptjs");
-//const middleware = require("../middleware/auth");
-const { requireAuth } = require("../middleware/auth");
-const passport = require("passport");
+const middleware = require("../middleware/auth");
+//const { requireAuth } = require("../middleware/auth");
+//const passport = require("passport");
 
 const router = express.Router();
 
@@ -39,23 +39,19 @@ router.post("/create", async (req, res) => {
 });
 
 //Get all Method
-router.get(
-  "/getAll",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    let users = User.find({}).then((users, err) => {
-      if (err) {
-        res.status(400).json({ message: err.message });
-      } else {
-        res.json({
-          status: 200,
-          message: "All users retrieved successfully!",
-          data: users,
-        });
-      }
-    });
-  }
-);
+router.get("/getAll", middleware, (req, res) => {
+  let users = User.find({}).then((users, err) => {
+    if (err) {
+      res.status(400).json({ message: err.message });
+    } else {
+      res.json({
+        status: 200,
+        message: "All users retrieved successfully!",
+        data: users,
+      });
+    }
+  });
+});
 
 //Get by ID Method
 router.get("/getOne/:id", (req, res) => {

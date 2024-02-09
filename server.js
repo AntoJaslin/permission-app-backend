@@ -43,41 +43,35 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use(passport.initialize()); // Initialize Passport middleware
+// app.use(passport.initialize()); // Initialize Passport middleware
 
-// Passport JWT Strategy Configuration
-const JwtStrategy = require("passport-jwt").Strategy;
-const ExtractJwt = require("passport-jwt").ExtractJwt;
-const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "secret_key",
-};
+// // Passport JWT Strategy Configuration
+// const JwtStrategy = require("passport-jwt").Strategy;
+// const ExtractJwt = require("passport-jwt").ExtractJwt;
+// const opts = {
+//   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+//   secretOrKey: "secret_key",
+// };
 
-passport.use(
-  new JwtStrategy(opts, function (jwt_payload, done) {
-    User.findById(jwt_payload.user_id).then((user, err) => {
-      if (err) {
-        return done(err, false);
-      }
-      if (user) {
-        console.log("Comes here jas");
-        return done(null, user);
-      } else {
-        return done(null, false);
-      }
-    });
-  })
-);
+// passport.use(
+//   new JwtStrategy(opts, function (jwt_payload, done) {
+//     console.log("Comes here jas", jwt_payload);
+//     User.findById(jwt_payload.user_id).then((user, err) => {
+//       if (err) {
+//         return done(err, false);
+//       }
+//       if (user) {
+//         console.log("Comes here jas");
+//         return done(null, user);
+//       } else {
+//         return done(null, false);
+//       }
+//     });
+//   })
+// );
 
 // Route Middleware to Secure Routes
-const requireAuth = passport.authenticate("jwt", { session: false });
-
-// // Apply Passport middleware to secure routes
-// app.use("/api/user", requireAuth);
-// app.use("/api/organization", requireAuth);
-// app.use("/api/role", requireAuth);
-// app.use("/api/permission", requireAuth);
-// app.use("/api/role-permission", requireAuth);
+// const requireAuth = passport.authenticate("jwt", { session: false });
 
 //admin apis
 app.use("/api/auth", authRoutes);
@@ -87,10 +81,10 @@ app.use("/api/role", roleRoutes);
 app.use("/api/permission", permissionRoutes);
 app.use("/api/role-permission", rolePermissionRoutes);
 
-app.get("/api/protected", requireAuth, (req, res) => {
-  console.log("Comes here jas");
-  res.json({ message: "Protected Route Accessed Successfully" });
-});
+// app.get("/api/protected", requireAuth, (req, res) => {
+//   console.log("Comes here jas");
+//   res.json({ message: "Protected Route Accessed Successfully" });
+// });
 
 app.listen(3000, () => {
   console.log(`Server Started at ${3000}`);

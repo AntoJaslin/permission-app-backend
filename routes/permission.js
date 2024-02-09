@@ -19,6 +19,7 @@ router.post("/create", async (req, res) => {
       const newPermission = new Permission({
         permission_name: req.body.permission_name,
         permission_label: req.body.permission_label,
+        permission_type: req.body.permission_type,
       });
       const permissionToSave = newPermission.save();
       res.status(200).json({
