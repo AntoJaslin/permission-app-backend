@@ -226,32 +226,29 @@ router.post("/reset-password", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
   try {
-    const oldUser = await User.findOne({ email: req.body.email });
+    encryptedPassword = await bcrypt.hash(req.body.password, 10);
+    const role = await Role.findOne({ role_name: "User" });
 
-    if (oldUser) {
-      return res.status(409).json({
-        code: 409,
-        message: "User Already Exist.",
-      });
-    } else {
-      encryptedPassword = await bcrypt.hash(req.body.password, 10);
-      const newUser = new User({
-        name: req.body.name,
-        role_id: req.body.role_id,
-        email: req.body.email,
-        password: encryptedPassword,
-        phone: req.body.phone,
-        status: req.body.status,
-      });
-      const userToSave = newUser.save();
-      res.status(200).json({
-        code: 200,
-        message: "Your account has created successfully!",
-        //category: categoryToSave
-      });
-    }
+    // Create a new user
+    const newUser = new User({
+      name: req.body.name,
+      role_id: role._id,
+      email: req.body.email,
+      password: encryptedPassword,
+      phone: req.body.phone,
+      status: "inactive",
+    });
+
+    // Save the new user
+    const savedUser = await newUser.save();
+
+    res.status(200).json({
+      code: 200,
+      message: "Your account has been created successfully!",
+      user: savedUser,
+    });
   } catch (error) {
-    res.status(400).json({ code: 200, message: error.message });
+    res.status(400).json({ code: 400, message: error.message });
   }
 });
 

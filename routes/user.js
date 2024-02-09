@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const middleware = require("../middleware/auth");
 //const { requireAuth } = require("../middleware/auth");
 //const passport = require("passport");
+const { faker } = require("@faker-js/faker");
 
 const router = express.Router();
 
@@ -36,6 +37,23 @@ router.post("/create", async (req, res) => {
   } catch (error) {
     res.status(400).json({ code: 200, message: error.message });
   }
+});
+
+//Generate fake users
+router.get("/generate-users", (req, res) => {
+  const user = generateUsers(50);
+  User.insertMany(user)
+    .then((docs) =>
+      console.log(`${docs.length} users have been inserted into the database.`)
+    )
+    .catch((err) => {
+      console.error(err);
+      console.error(
+        `${
+          err.writeErrors?.length ?? 0
+        } errors occurred during the insertMany operation.`
+      );
+    });
 });
 
 //Get all Method
@@ -125,5 +143,29 @@ router.delete("/delete/:id", (req, res) => {
       res.status(500).send(error);
     });
 });
+
+const generateUsers = (num) => {
+  const user = [];
+
+  for (let i = 0; i < num; i++) {
+    const name = faker.name.firstName();
+    const role_id = "65c3b67da6e6a0607d66a0d6";
+    const email = faker.internet.email();
+    const phone = faker.datatype.number();
+    const password = faker.datatype.number();
+    const status = "active";
+
+    user.push({
+      name,
+      role_id,
+      email,
+      phone,
+      password,
+      status,
+    });
+  }
+
+  return user;
+};
 
 module.exports = router;
